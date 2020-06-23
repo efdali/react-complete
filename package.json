@@ -1,0 +1,52 @@
+{
+  "name": "react-complete",
+  "version": "0.0.1",
+  "description": "simple customizable react autocomplete component",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --mode development",
+    "transpile": "babel src -d dist --copy-files"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/efdali/react-autocomplete.git"
+  },
+  "keywords": [
+    "react",
+    "autocomplete",
+    "react-autocomplete",
+    "autosuggestion",
+    "complete"
+  ],
+  "author": "Efdal Incesu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/efdali/react-autocomplete/issues"
+  },
+  "homepage": "https://github.com/efdali/react-autocomplete#readme",
+  "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^3.6.0",
+    "html-webpack-plugin": "^4.3.0",
+    "path": "^0.12.7",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "style-loader": "^1.2.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "peerDependencies": {
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "dependencies": {}
+}

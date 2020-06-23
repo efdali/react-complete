@@ -1,0 +1,13 @@
+{
+  "presets": [
+    "react",
+    [
+      "babel-preset-env",
+      {
+        "targets": {
+          "node": "10"
+        }
+      }
+    ]
+  ]
+}

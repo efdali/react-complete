@@ -1,0 +1,20 @@
+.autocomplete-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.autocomplete-results {
+  margin-top: -1px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+.autocomplete-result {
+  padding: 6px 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.autocomplete-result.active {
+  background-color: #3b3ed9;
+  color: #fff;
+}
