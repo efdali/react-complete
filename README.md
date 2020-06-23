@@ -2,6 +2,10 @@
 
 > simple customizable react autocomplete component
 
+## Demo
+
+[Codesandbox](https://codesandbox.io/s/aged-feather-636s2)
+
 ## Install
 
 ```bash
