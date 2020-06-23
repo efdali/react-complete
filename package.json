@@ -22,9 +22,9 @@
   "author": "Efdal Incesu",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/efdali/react-autocomplete/issues"
+    "url": "https://github.com/efdali/react-complete/issues"
   },
-  "homepage": "https://github.com/efdali/react-autocomplete#readme",
+  "homepage": "https://github.com/efdali/react-complete#readme",
   "devDependencies": {
     "@babel/core": "^7.10.3",
     "babel-cli": "^6.26.0",
