@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -18,45 +16,25 @@ require('./index.css');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
-var KEYCODE = {
+const KEYCODE = {
   up: 38,
   down: 40,
   enter: 13
 };
 
-function AutoComplete(props) {
-  var _this = this;
+function Complete(props) {
+  const { delay, limit, prop, field } = props;
+  const [value, setValue] = (0, _react.useState)('');
+  const [results, setResults] = (0, _react.useState)([]);
+  const [activeIndex, setActiveIndex] = (0, _react.useState)(-1);
+  const timeOut = (0, _react.useRef)(null);
+  const isClicked = (0, _react.useRef)(false);
 
-  var delay = props.delay,
-      limit = props.limit,
-      prop = props.prop,
-      field = props.field;
+  const getObjProp = (0, _react.useCallback)((data, prop) => {
+    const properties = prop.split('.');
 
-  var _useState = (0, _react.useState)(''),
-      _useState2 = _slicedToArray(_useState, 2),
-      value = _useState2[0],
-      setValue = _useState2[1];
-
-  var _useState3 = (0, _react.useState)([]),
-      _useState4 = _slicedToArray(_useState3, 2),
-      results = _useState4[0],
-      setResults = _useState4[1];
-
-  var _useState5 = (0, _react.useState)(-1),
-      _useState6 = _slicedToArray(_useState5, 2),
-      activeIndex = _useState6[0],
-      setActiveIndex = _useState6[1];
-
-  var timeOut = (0, _react.useRef)(null);
-  var isClicked = (0, _react.useRef)(false);
-
-  var getObjProp = (0, _react.useCallback)(function (data, prop) {
-    var properties = prop.split('.');
-
-    var active = data;
-    properties.forEach(function (item) {
+    let active = data;
+    properties.forEach(item => {
       if (active[item]) {
         active = active[item];
       } else {
@@ -66,84 +44,56 @@ function AutoComplete(props) {
     return active;
   }, []);
 
-  var fetchData = (0, _react.useCallback)(_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var data, suggestions, activeItem;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            data = props.data;
+  const fetchData = (0, _react.useCallback)(async () => {
+    let data = props.data;
 
-            if (!(typeof data === 'function')) {
-              _context.next = 5;
-              break;
-            }
+    if (typeof data === 'function') {
+      data = await data(value);
+    }
 
-            _context.next = 4;
-            return data(value);
+    if (prop) {
+      data = getObjProp(data, prop);
+    }
 
-          case 4:
-            data = _context.sent;
+    if (!Array.isArray(data)) {
+      data = [];
+    }
 
-          case 5:
-
-            if (prop) {
-              data = getObjProp(data, prop);
-            }
-
-            if (!Array.isArray(data)) {
-              data = [];
-            }
-
-            suggestions = [];
-            activeItem = void 0;
-
-            data.forEach(function (item) {
-              if (field) {
-                activeItem = item[field];
-              } else {
-                activeItem = item;
-              }
-
-              if (activeItem.toLowerCase().includes(value.toLowerCase())) {
-                suggestions.push(activeItem);
-              }
-            });
-            suggestions = suggestions ? suggestions.slice(0, limit) : [];
-            setResults(suggestions);
-
-          case 12:
-          case 'end':
-            return _context.stop();
-        }
+    let suggestions = [];
+    let activeItem;
+    data.forEach(item => {
+      if (field) {
+        activeItem = item[field];
+      } else {
+        activeItem = item;
       }
-    }, _callee, _this);
-  })), [field, limit, value, prop, props.data]);
 
-  var changeHandle = (0, _react.useCallback)(function (_ref2) {
-    var target = _ref2.target;
+      if (activeItem.toLowerCase().includes(value.toLowerCase())) {
+        suggestions.push(activeItem);
+      }
+    });
+    suggestions = suggestions ? suggestions.slice(0, limit) : [];
+    setResults(suggestions);
+  }, [field, limit, value, prop, props.data]);
 
+  const changeHandle = (0, _react.useCallback)(({ target }) => {
     setValue(target.value);
     isClicked.current = false;
   }, []);
 
-  var changeIndex = (0, _react.useCallback)(function () {
-    var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
-
+  const changeIndex = (0, _react.useCallback)((index = -1) => {
     setActiveIndex(index);
   }, []);
 
-  var changeValue = (0, _react.useCallback)(function () {
-    var result = results[activeIndex];
+  const changeValue = (0, _react.useCallback)(() => {
+    const result = results[activeIndex];
     setValue(result);
     setActiveIndex(0);
-    // setResults([]);
     isClicked.current = true;
   }, [results, activeIndex]);
 
-  var keyPressHandle = (0, _react.useCallback)(function (event) {
-    var keyCode = event.keyCode;
-
+  const keyPressHandle = (0, _react.useCallback)(event => {
+    const { keyCode } = event;
 
     if (keyCode === KEYCODE.up) {
       if (activeIndex > 0) {
@@ -163,7 +113,7 @@ function AutoComplete(props) {
     }
   }, [activeIndex, changeIndex, results.length, changeValue]);
 
-  (0, _react.useEffect)(function () {
+  (0, _react.useEffect)(() => {
     if (isClicked.current) return;
 
     if (timeOut.current) {
@@ -180,7 +130,7 @@ function AutoComplete(props) {
     { className: 'autocomplete' },
     _react2.default.createElement('input', {
       className: 'autocomplete-input',
-      placeholder: '...',
+      placeholder: 'what are you search?',
       value: value,
       onChange: changeHandle,
       onKeyUp: keyPressHandle
@@ -188,33 +138,21 @@ function AutoComplete(props) {
     _react2.default.createElement(
       'div',
       { className: 'autocomplete-results' },
-      !isClicked.current && results.length > 0 && results.map(function (result, index) {
-        return _react2.default.createElement('div', {
-          key: index,
-          onClick: function onClick() {
-            return changeValue();
-          },
-          onFocus: function onFocus() {
-            return changeIndex(index);
-          },
-          onBlur: function onBlur() {
-            return changeIndex(-1);
-          },
-          onMouseOver: function onMouseOver() {
-            return changeIndex(index);
-          },
-          onMouseLeave: function onMouseLeave() {
-            return changeIndex(-1);
-          },
-          className: 'autocomplete-result ' + (activeIndex === index && 'active'),
-          dangerouslySetInnerHTML: { __html: result }
-        });
-      })
+      !isClicked.current && results.length > 0 && results.map((result, index) => _react2.default.createElement('div', {
+        key: index,
+        onClick: () => changeValue(),
+        onFocus: () => changeIndex(index),
+        onBlur: () => changeIndex(-1),
+        onMouseOver: () => changeIndex(index),
+        onMouseLeave: () => changeIndex(-1),
+        className: `autocomplete-result ${activeIndex === index && 'active'}`,
+        dangerouslySetInnerHTML: { __html: result }
+      }))
     )
   );
 }
 
-AutoComplete.propTypes = {
+Complete.propTypes = {
   limit: _propTypes2.default.number,
   delay: _propTypes2.default.number,
   field: _propTypes2.default.string,
@@ -222,9 +160,9 @@ AutoComplete.propTypes = {
   data: _propTypes2.default.oneOfType([_propTypes2.default.array, _propTypes2.default.object, _propTypes2.default.func]).isRequired
 };
 
-AutoComplete.defaultProps = {
+Complete.defaultProps = {
   limit: 10,
   delay: 300
 };
 
-exports.default = AutoComplete;
+exports.default = Complete;
