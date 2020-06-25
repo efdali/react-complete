@@ -1,5 +1,5 @@
 {
-  "name": "react-complete",
+  "name": "@efdali/react-complete",
   "version": "0.0.3",
   "description": "simple customizable react autocomplete component",
   "main": "./dist/index.js",

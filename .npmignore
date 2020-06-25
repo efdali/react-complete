@@ -2,3 +2,4 @@ src
 example
 webpack.config.js
 .babelrc
+.npmrc
