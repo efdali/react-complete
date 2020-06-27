@@ -4,6 +4,7 @@ import Complete from '../../src/index';
 
 const App = () => (
   <div className="container">
+    <Complete data={['javascript', 'typescript', 'ecmascript']} />
     <Complete
       data={(value) =>
         fetch(

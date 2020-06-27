@@ -8,12 +8,13 @@ const KEYCODE = {
   enter: 13,
 };
 
-function SearchInput({ input, value, onChange, onKeyUp }) {
+function SearchInput({ input, value, onChange, onKeyUp, ...props }) {
   if (input && React.isValidElement(input)) {
     return React.cloneElement(input, {
       value: value,
       onChange: onChange,
       onKeyUp: onKeyUp,
+      ...props,
     });
   }
 
@@ -24,6 +25,7 @@ function SearchInput({ input, value, onChange, onKeyUp }) {
       value={value}
       onChange={onChange}
       onKeyUp={onKeyUp}
+      {...props}
     />
   );
 }
@@ -34,7 +36,7 @@ function Complete(props) {
   const [results, setResults] = useState([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const timeOut = useRef(null);
-  const isClicked = useRef(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const getObjProp = useCallback((data, prop) => {
     const properties = prop.split('.');
@@ -86,7 +88,7 @@ function Complete(props) {
 
   const changeHandle = useCallback(({ target }) => {
     setValue(target.value);
-    isClicked.current = false;
+    setShowSuggestions(true);
   }, []);
 
   const changeIndex = useCallback((index = -1) => {
@@ -97,7 +99,7 @@ function Complete(props) {
     const result = results[activeIndex].raw;
     setValue(result);
     setActiveIndex(0);
-    isClicked.current = true;
+    setShowSuggestions(false);
   }, [results, activeIndex]);
 
   const keyPressHandle = useCallback(
@@ -125,7 +127,7 @@ function Complete(props) {
   );
 
   useEffect(() => {
-    if (isClicked.current) return;
+    if (!showSuggestions) return;
 
     if (timeOut.current) {
       clearTimeout(timeOut.current);
@@ -143,9 +145,15 @@ function Complete(props) {
         value={value}
         onChange={changeHandle}
         onKeyUp={keyPressHandle}
+        onBlur={() => {
+          setShowSuggestions(false);
+        }}
+        onFocus={() => setShowSuggestions(true)}
       />
-      <div className="autocomplete-results">
-        {!isClicked.current &&
+      <div
+        className={`autocomplete-results ${showSuggestions ? 'active' : ''}`}
+      >
+        {showSuggestions &&
           results.length > 0 &&
           results.map((result, index) => (
             <div
@@ -159,7 +167,11 @@ function Complete(props) {
                 activeIndex === index && 'active'
               }`}
             >
-              {renderItem ? renderItem(result) : result.raw}
+              {renderItem ? (
+                renderItem(result)
+              ) : (
+                <span className="result-text">{result.raw}</span>
+              )}
             </div>
           ))}
       </div>
