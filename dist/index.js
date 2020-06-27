@@ -122,21 +122,21 @@ function Complete(props) {
 
     if (keyCode === KEYCODE.up) {
       if (activeIndex > 0) {
-        changeIndex(activeIndex - 1);
+        setActiveIndex(activeIndex - 1);
       } else {
-        changeIndex(results.length - 1);
+        setActiveIndex(results.length - 1);
       }
     } else if (keyCode === KEYCODE.down) {
       if (activeIndex < results.length - 1) {
-        changeIndex(activeIndex + 1);
+        setActiveIndex(activeIndex + 1);
       } else {
-        changeIndex(0);
+        setActiveIndex(0);
       }
     } else if (keyCode === KEYCODE.enter) {
       event.preventDefault();
       changeValue();
     }
-  }, [activeIndex, changeIndex, results.length, changeValue]);
+  }, [activeIndex, results.length, changeValue]);
 
   (0, _react.useEffect)(() => {
     if (!showSuggestions) return;
@@ -151,40 +151,45 @@ function Complete(props) {
   }, [value]);
 
   return _react2.default.createElement(
-    'div',
-    { className: 'autocomplete' },
-    _react2.default.createElement(SearchInput, {
-      input: inputComp,
-      value: value,
-      onChange: changeHandle,
-      onKeyUp: keyPressHandle,
-      onBlur: () => {
+    _react2.default.Fragment,
+    null,
+    showSuggestions && _react2.default.createElement('div', {
+      className: 'overlay',
+      onClick: () => {
         setShowSuggestions(false);
-      },
-      onFocus: () => setShowSuggestions(true)
+      }
     }),
     _react2.default.createElement(
       'div',
-      {
-        className: `autocomplete-results ${showSuggestions ? 'active' : ''}`
-      },
-      showSuggestions && results.length > 0 && results.map((result, index) => _react2.default.createElement(
+      { className: 'autocomplete' },
+      _react2.default.createElement(SearchInput, {
+        input: inputComp,
+        value: value,
+        onChange: changeHandle,
+        onKeyUp: keyPressHandle,
+        onFocus: () => setShowSuggestions(true)
+      }),
+      _react2.default.createElement(
         'div',
-        {
-          key: index,
-          onClick: () => changeValue(),
-          onFocus: () => changeIndex(index),
-          onBlur: () => changeIndex(-1),
-          onMouseOver: () => changeIndex(index),
-          onMouseLeave: () => changeIndex(-1),
-          className: `autocomplete-result ${activeIndex === index && 'active'}`
-        },
-        renderItem ? renderItem(result) : _react2.default.createElement(
-          'span',
-          { className: 'result-text' },
-          result.raw
-        )
-      ))
+        { className: 'autocomplete-results' },
+        showSuggestions && results.length > 0 && results.map((result, index) => _react2.default.createElement(
+          'div',
+          {
+            key: index,
+            onClick: () => changeValue(),
+            onFocus: () => changeIndex(index),
+            onBlur: () => changeIndex(-1),
+            onMouseOver: () => changeIndex(index),
+            onMouseLeave: () => changeIndex(-1),
+            className: `autocomplete-result ${activeIndex === index && 'active'}`
+          },
+          renderItem ? renderItem(result) : _react2.default.createElement(
+            'span',
+            { className: 'result-text' },
+            result.raw
+          )
+        ))
+      )
     )
   );
 }

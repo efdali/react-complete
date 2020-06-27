@@ -1,7 +1,14 @@
 .autocomplete {
-  width: auto;
   display: inline-block;
   position: relative;
+  z-index: 999;
+}
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
 }
 .autocomplete-input {
   width: 100%;
