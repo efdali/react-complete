@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -16,19 +18,42 @@ require('./index.css');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
 const KEYCODE = {
   up: 38,
   down: 40,
   enter: 13
 };
 
+function SearchInput(_ref) {
+  let { input, value, onChange, onKeyUp } = _ref,
+      props = _objectWithoutProperties(_ref, ['input', 'value', 'onChange', 'onKeyUp']);
+
+  if (input && _react2.default.isValidElement(input)) {
+    return _react2.default.cloneElement(input, _extends({
+      value: value,
+      onChange: onChange,
+      onKeyUp: onKeyUp
+    }, props));
+  }
+
+  return _react2.default.createElement('input', _extends({
+    className: 'autocomplete-input',
+    placeholder: 'what are you search?',
+    value: value,
+    onChange: onChange,
+    onKeyUp: onKeyUp
+  }, props));
+}
+
 function Complete(props) {
-  const { delay, limit, prop, field } = props;
+  const { delay, limit, prop, field, inputComp, renderItem } = props;
   const [value, setValue] = (0, _react.useState)('');
   const [results, setResults] = (0, _react.useState)([]);
   const [activeIndex, setActiveIndex] = (0, _react.useState)(-1);
   const timeOut = (0, _react.useRef)(null);
-  const isClicked = (0, _react.useRef)(false);
+  const [showSuggestions, setShowSuggestions] = (0, _react.useState)(false);
 
   const getObjProp = (0, _react.useCallback)((data, prop) => {
     const properties = prop.split('.');
@@ -69,7 +94,7 @@ function Complete(props) {
       }
 
       if (activeItem.toLowerCase().includes(value.toLowerCase())) {
-        suggestions.push(activeItem);
+        suggestions.push(field ? { item, raw: activeItem } : { raw: activeItem });
       }
     });
     suggestions = suggestions ? suggestions.slice(0, limit) : [];
@@ -78,7 +103,7 @@ function Complete(props) {
 
   const changeHandle = (0, _react.useCallback)(({ target }) => {
     setValue(target.value);
-    isClicked.current = false;
+    setShowSuggestions(true);
   }, []);
 
   const changeIndex = (0, _react.useCallback)((index = -1) => {
@@ -86,10 +111,10 @@ function Complete(props) {
   }, []);
 
   const changeValue = (0, _react.useCallback)(() => {
-    const result = results[activeIndex];
+    const result = results[activeIndex].raw;
     setValue(result);
     setActiveIndex(0);
-    isClicked.current = true;
+    setShowSuggestions(false);
   }, [results, activeIndex]);
 
   const keyPressHandle = (0, _react.useCallback)(event => {
@@ -114,7 +139,7 @@ function Complete(props) {
   }, [activeIndex, changeIndex, results.length, changeValue]);
 
   (0, _react.useEffect)(() => {
-    if (isClicked.current) return;
+    if (!showSuggestions) return;
 
     if (timeOut.current) {
       clearTimeout(timeOut.current);
@@ -128,26 +153,38 @@ function Complete(props) {
   return _react2.default.createElement(
     'div',
     { className: 'autocomplete' },
-    _react2.default.createElement('input', {
-      className: 'autocomplete-input',
-      placeholder: 'what are you search?',
+    _react2.default.createElement(SearchInput, {
+      input: inputComp,
       value: value,
       onChange: changeHandle,
-      onKeyUp: keyPressHandle
+      onKeyUp: keyPressHandle,
+      onBlur: () => {
+        setShowSuggestions(false);
+      },
+      onFocus: () => setShowSuggestions(true)
     }),
     _react2.default.createElement(
       'div',
-      { className: 'autocomplete-results' },
-      !isClicked.current && results.length > 0 && results.map((result, index) => _react2.default.createElement('div', {
-        key: index,
-        onClick: () => changeValue(),
-        onFocus: () => changeIndex(index),
-        onBlur: () => changeIndex(-1),
-        onMouseOver: () => changeIndex(index),
-        onMouseLeave: () => changeIndex(-1),
-        className: `autocomplete-result ${activeIndex === index && 'active'}`,
-        dangerouslySetInnerHTML: { __html: result }
-      }))
+      {
+        className: `autocomplete-results ${showSuggestions ? 'active' : ''}`
+      },
+      showSuggestions && results.length > 0 && results.map((result, index) => _react2.default.createElement(
+        'div',
+        {
+          key: index,
+          onClick: () => changeValue(),
+          onFocus: () => changeIndex(index),
+          onBlur: () => changeIndex(-1),
+          onMouseOver: () => changeIndex(index),
+          onMouseLeave: () => changeIndex(-1),
+          className: `autocomplete-result ${activeIndex === index && 'active'}`
+        },
+        renderItem ? renderItem(result) : _react2.default.createElement(
+          'span',
+          { className: 'result-text' },
+          result.raw
+        )
+      ))
     )
   );
 }

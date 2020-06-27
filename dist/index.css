@@ -1,21 +1,29 @@
+.autocomplete {
+  width: auto;
+  display: inline-block;
+  position: relative;
+}
 .autocomplete-input {
   width: 100%;
   box-sizing: border-box;
 }
-
 .autocomplete-results {
-  margin-top: -1px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  background-color: #fff;
+  position: absolute;
+  z-index: 999;
+  width: 100%;
 }
 .autocomplete-result {
-  padding: 6px 8px;
   cursor: pointer;
   box-sizing: border-box;
+  background-color: #fff;
+  transition: all 100ms ease-in-out;
+  box-sizing: border-box;
 }
-
 .autocomplete-result.active {
   background-color: #3b3ed9;
   color: #fff;
+}
+.result-text {
+  padding: 8px 4px;
+  display: inline-block;
 }
