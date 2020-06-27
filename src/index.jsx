@@ -8,8 +8,28 @@ const KEYCODE = {
   enter: 13,
 };
 
+function SearchInput({ input, value, onChange, onKeyUp }) {
+  if (input && React.isValidElement(input)) {
+    return React.cloneElement(input, {
+      value: value,
+      onChange: onChange,
+      onKeyUp: onKeyUp,
+    });
+  }
+
+  return (
+    <input
+      className="autocomplete-input"
+      placeholder="what are you search?"
+      value={value}
+      onChange={onChange}
+      onKeyUp={onKeyUp}
+    />
+  );
+}
+
 function Complete(props) {
-  const { delay, limit, prop, field } = props;
+  const { delay, limit, prop, field, inputComp, renderItem } = props;
   const [value, setValue] = useState('');
   const [results, setResults] = useState([]);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -55,7 +75,9 @@ function Complete(props) {
       }
 
       if (activeItem.toLowerCase().includes(value.toLowerCase())) {
-        suggestions.push(activeItem);
+        suggestions.push(
+          field ? { item, raw: activeItem } : { raw: activeItem }
+        );
       }
     });
     suggestions = suggestions ? suggestions.slice(0, limit) : [];
@@ -72,7 +94,7 @@ function Complete(props) {
   }, []);
 
   const changeValue = useCallback(() => {
-    const result = results[activeIndex];
+    const result = results[activeIndex].raw;
     setValue(result);
     setActiveIndex(0);
     isClicked.current = true;
@@ -116,9 +138,8 @@ function Complete(props) {
 
   return (
     <div className="autocomplete">
-      <input
-        className="autocomplete-input"
-        placeholder="what are you search?"
+      <SearchInput
+        input={inputComp}
         value={value}
         onChange={changeHandle}
         onKeyUp={keyPressHandle}
@@ -126,7 +147,7 @@ function Complete(props) {
       <div className="autocomplete-results">
         {!isClicked.current &&
           results.length > 0 &&
-          results.map((result, index) => (
+          results.slice(0, results.length - 1).map((result, index) => (
             <div
               key={index}
               onClick={() => changeValue()}
@@ -137,8 +158,9 @@ function Complete(props) {
               className={`autocomplete-result ${
                 activeIndex === index && 'active'
               }`}
-              dangerouslySetInnerHTML={{ __html: result }}
-            ></div>
+            >
+              {renderItem ? renderItem(result) : result.raw}
+            </div>
           ))}
       </div>
     </div>

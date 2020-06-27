@@ -53,6 +53,31 @@ const data = {
 <Complete data={data} prop="languages.frameworks" field="name" />
 ```
 
+Custom Input Component
+
+```javascript
+<Complete
+  inputComp={
+    <input type="text" placeholder="search..." className="search-input" />
+  }
+/>
+```
+
+Custom Item Component
+
+> Parameter are object that contain 'fetch' result(item) and searching array's field(raw)
+
+```javascript
+<Complete
+  renderItem={({ item, raw }) => (
+    <div className="item">
+      <img src={item.img} />
+      <span>{raw}</span>
+    </div>
+  )}
+/>
+```
+
 ## License
 
 ISC

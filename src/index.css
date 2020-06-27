@@ -1,3 +1,7 @@
+.autocomplete {
+  width: auto;
+  display: inline-block;
+}
 .autocomplete-input {
   width: 100%;
   box-sizing: border-box;
@@ -10,7 +14,7 @@
   background-color: #fff;
 }
 .autocomplete-result {
-  padding: 6px 8px;
+  /* padding: 6px 8px; */
   cursor: pointer;
   box-sizing: border-box;
 }

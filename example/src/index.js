@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import Complete from '../../src/index';
 
 const App = () => (
-  <div>
+  <div className="container">
     <Complete
       data={(value) =>
         fetch(
@@ -12,6 +12,15 @@ const App = () => (
       }
       prop="results"
       field="name"
+      inputComp={
+        <input type="text" placeholder="ara ulan" className="input-element" />
+      }
+      renderItem={({ item, raw }) => (
+        <div className="item">
+          <img src={item.image} alt={raw} className="item-image" />
+          <h5 className="item-title">{raw}</h5>
+        </div>
+      )}
     />
   </div>
 );
