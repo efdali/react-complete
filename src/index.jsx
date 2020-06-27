@@ -108,22 +108,22 @@ function Complete(props) {
 
       if (keyCode === KEYCODE.up) {
         if (activeIndex > 0) {
-          changeIndex(activeIndex - 1);
+          setActiveIndex(activeIndex - 1);
         } else {
-          changeIndex(results.length - 1);
+          setActiveIndex(results.length - 1);
         }
       } else if (keyCode === KEYCODE.down) {
         if (activeIndex < results.length - 1) {
-          changeIndex(activeIndex + 1);
+          setActiveIndex(activeIndex + 1);
         } else {
-          changeIndex(0);
+          setActiveIndex(0);
         }
       } else if (keyCode === KEYCODE.enter) {
         event.preventDefault();
         changeValue();
       }
     },
-    [activeIndex, changeIndex, results.length, changeValue]
+    [activeIndex, results.length, changeValue]
   );
 
   useEffect(() => {
@@ -139,43 +139,48 @@ function Complete(props) {
   }, [value]);
 
   return (
-    <div className="autocomplete">
-      <SearchInput
-        input={inputComp}
-        value={value}
-        onChange={changeHandle}
-        onKeyUp={keyPressHandle}
-        onBlur={() => {
-          setShowSuggestions(false);
-        }}
-        onFocus={() => setShowSuggestions(true)}
-      />
-      <div
-        className={`autocomplete-results ${showSuggestions ? 'active' : ''}`}
-      >
-        {showSuggestions &&
-          results.length > 0 &&
-          results.map((result, index) => (
-            <div
-              key={index}
-              onClick={() => changeValue()}
-              onFocus={() => changeIndex(index)}
-              onBlur={() => changeIndex(-1)}
-              onMouseOver={() => changeIndex(index)}
-              onMouseLeave={() => changeIndex(-1)}
-              className={`autocomplete-result ${
-                activeIndex === index && 'active'
-              }`}
-            >
-              {renderItem ? (
-                renderItem(result)
-              ) : (
-                <span className="result-text">{result.raw}</span>
-              )}
-            </div>
-          ))}
+    <React.Fragment>
+      {showSuggestions && (
+        <div
+          className="overlay"
+          onClick={() => {
+            setShowSuggestions(false);
+          }}
+        ></div>
+      )}
+      <div className="autocomplete">
+        <SearchInput
+          input={inputComp}
+          value={value}
+          onChange={changeHandle}
+          onKeyUp={keyPressHandle}
+          onFocus={() => setShowSuggestions(true)}
+        />
+        <div className="autocomplete-results">
+          {showSuggestions &&
+            results.length > 0 &&
+            results.map((result, index) => (
+              <div
+                key={index}
+                onClick={() => changeValue()}
+                onFocus={() => changeIndex(index)}
+                onBlur={() => changeIndex(-1)}
+                onMouseOver={() => changeIndex(index)}
+                onMouseLeave={() => changeIndex(-1)}
+                className={`autocomplete-result ${
+                  activeIndex === index && 'active'
+                }`}
+              >
+                {renderItem ? (
+                  renderItem(result)
+                ) : (
+                  <span className="result-text">{result.raw}</span>
+                )}
+              </div>
+            ))}
+        </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 }
 
