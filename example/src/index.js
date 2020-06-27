@@ -13,7 +13,7 @@ const App = () => (
       prop="results"
       field="name"
       inputComp={
-        <input type="text" placeholder="ara ulan" className="input-element" />
+        <input type="text" placeholder="Search?" className="input-element" />
       }
       renderItem={({ item, raw }) => (
         <div className="item">

@@ -147,7 +147,7 @@ function Complete(props) {
       <div className="autocomplete-results">
         {!isClicked.current &&
           results.length > 0 &&
-          results.slice(0, results.length - 1).map((result, index) => (
+          results.map((result, index) => (
             <div
               key={index}
               onClick={() => changeValue()}

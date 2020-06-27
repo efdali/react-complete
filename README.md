@@ -65,7 +65,7 @@ Custom Input Component
 
 Custom Item Component
 
-> Parameter are object that contain 'fetch' result(item) and searching array's field(raw)
+> Parameter is object that contain 'fetch' result(item) and searching array's field(raw)
 
 ```javascript
 <Complete
